@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import { getAll, getInactive, getActive, getSorted } from '../utils/api';
+import { getAll, getInactive, getActive, getSorted, deleteProductRoute, updateProductDisable } from '../utils/api';
 import { Link } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
@@ -50,6 +50,33 @@ const Home = () => {
     setSelection(e.target.value);
   };
 
+  const deleteProduct = (id) =>{
+    // console.log(`${deleteProductRoute}/${id}`);
+    axios.delete(`${deleteProductRoute}/${id}`)
+    .then((res)=>{
+      if(res.data.status == 'success'){
+        getAllData();
+      }
+    })
+    .catch((e)=>{
+      console.log('Error Deleting '+ e);
+    })
+    
+  }
+
+  const disableProduct = (id) =>{
+    console.log('disable ' + id);
+    axios.put(`${updateProductDisable}/${id}`)
+    .then((res)=>{
+      if(res.data.status == 'success'){
+        getAllData();
+      }
+    })
+    .catch((e)=>{
+      console.log('Error Deleting '+ e);
+    })
+  }
+
   return (
     (isLoading)? 
       <>Loading</>
@@ -80,20 +107,20 @@ const Home = () => {
               <th>Expiration Date</th>
               <th>Active</th>
               <th>Warehouse</th>
-              <th>Action</th>
-              <th>Buttons</th>
+              <th>View</th>
+              <th>Disable</th>
               <th>Update</th>
+              <th>Delete</th>
             </thead>
             <tbody>
             {
               products.map((value, index)=>{
                 return(
-                  <Row product = {value} key={index}/>
+                  <Row product = {value} key={index} deleteProduct = {deleteProduct} disableProduct = {disableProduct}/>
                 )
               })
             }
             </tbody>
-
           </table>
       </div>
   )
